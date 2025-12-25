@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neon Snake 3D</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="ui-layer">
+        <header>
+            <h1>NEON SNAKE <span class="version">3D</span></h1>
+            <div class="score-container">
+                <div class="score-box">
+                    <span class="label">SCORE</span>
+                    <span id="score">0</span>
+                </div>
+                <div class="score-box">
+                    <span class="label">BEST</span>
+                    <span id="high-score">0</span>
+                </div>
+            </div>
+            <div id="turbo-indicator" class="hidden">TURBO ACTIVE</div>
+        </header>
+
+        <div id="start-screen" class="overlay">
+            <h2>SYSTEM READY</h2>
+            <p>Use ARROW KEYS or SWIPE to move</p>
+            <p class="small">Hold SPACE for Turbo Boost</p>
+            <p class="small">📱 Mobile: Swipe to control</p>
+            <button id="start-btn" class="cyber-btn">INITIALIZE</button>
+        </div>
+
+        <div id="game-over" class="overlay hidden">
+            <h2 class="glitch">SYSTEM FAILURE</h2>
+            <p>Collision Detected</p>
+            <p>Final Score: <span id="final-score">0</span></p>
+            <button id="restart-btn" class="cyber-btn">REBOOT</button>
+        </div>
+    </div>
+
+    <!-- 3D World -->
+    <div class="scene">
+        <div class="world" id="world">
+            <div class="floor-grid"></div>
+            <div id="game-board-3d">
+                <!-- 3D Cubes injected here -->
+            </div> sa
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

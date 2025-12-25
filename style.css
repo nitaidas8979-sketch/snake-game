@@ -1,0 +1,263 @@
+:root {
+    --bg-color: #050510;
+    --neon-blue: #00f3ff;
+    --neon-pink: #bc13fe;
+    --neon-green: #0aff0a;
+    --grid-size: 40px;
+    /* Size of one abstract unit in pixels */
+    --board-size: 20;
+    /* 20x20 grid */
+    --perspective: 1200px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: white;
+    font-family: 'Orbitron', sans-serif;
+    height: 100vh;
+    overflow: hidden;
+    perspective: var(--perspective);
+}
+
+/* UI Layer */
+.ui-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 100;
+    pointer-events: none;
+}
+
+header {
+    background: linear-gradient(to bottom, rgba(5, 5, 16, 0.9), transparent);
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+h1 {
+    font-size: 2rem;
+    text-shadow: 0 0 10px var(--neon-blue);
+}
+
+.version {
+    color: var(--neon-pink);
+    font-size: 1rem;
+    vertical-align: super;
+}
+
+.score-container {
+    text-align: right;
+}
+
+.score-box {
+    margin-bottom: 5px;
+}
+
+.label {
+    font-size: 0.8rem;
+    color: #888;
+}
+
+#score,
+#high-score {
+    font-size: 1.5rem;
+    color: var(--neon-green);
+    text-shadow: 0 0 5px var(--neon-green);
+}
+
+.overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(5, 5, 16, 0.9);
+    border: 2px solid var(--neon-blue);
+    padding: 40px;
+    text-align: center;
+    pointer-events: auto;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 0 30px rgba(0, 243, 255, 0.2);
+}
+
+.hidden {
+    display: none !important;
+}
+
+.cyber-btn {
+    background: transparent;
+    border: 2px solid var(--neon-pink);
+    color: var(--neon-pink);
+    padding: 15px 40px;
+    font-size: 1.2rem;
+    font-family: 'Orbitron', sans-serif;
+    margin-top: 20px;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-shadow: 0 0 5px var(--neon-pink);
+    box-shadow: 0 0 10px rgba(188, 19, 254, 0.2);
+}
+
+.cyber-btn:hover {
+    background: var(--neon-pink);
+    color: white;
+    box-shadow: 0 0 30px var(--neon-pink);
+}
+
+#turbo-indicator {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    color: var(--neon-pink);
+    font-weight: bold;
+    font-style: italic;
+    animation: flash 0.2s infinite alternate;
+}
+
+@keyframes flash {
+    from {
+        opacity: 0.5;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* 3D Scene */
+.scene {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    perspective: var(--perspective);
+}
+
+.world {
+    width: calc(var(--grid-size) * var(--board-size));
+    height: calc(var(--grid-size) * var(--board-size));
+    transform-style: preserve-3d;
+    transform: rotateX(60deg) rotateZ(0deg);
+    transition: transform 0.5s cubic-bezier(0.1, 0.7, 1.0, 0.1);
+}
+
+.floor-grid {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-image:
+        linear-gradient(rgba(0, 243, 255, 0.2) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 243, 255, 0.2) 1px, transparent 1px);
+    background-size: var(--grid-size) var(--grid-size);
+    /* Use outline instead of border so it doesn't overlap the edge cells */
+    outline: 3px solid var(--neon-blue);
+    outline-offset: 0px;
+    box-shadow: 0 0 50px rgba(0, 243, 255, 0.1);
+}
+
+/* 3D Cube Construction */
+.cube {
+    position: absolute;
+    width: var(--grid-size);
+    height: var(--grid-size);
+    transform-style: preserve-3d;
+    /* transition: transform 0.15s linear; */
+    /* Manual interpolation in JS for smooth turbo */
+}
+
+.cube-inner {
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+}
+
+.cube-face {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0.9;
+}
+
+.cube-top {
+    transform: rotateX(90deg) translateZ(calc(var(--grid-size)/2));
+}
+
+.cube-front {
+    transform: rotateY(0deg) translateZ(calc(var(--grid-size)/2));
+}
+
+.cube-right {
+    transform: rotateY(90deg) translateZ(calc(var(--grid-size)/2));
+}
+
+.cube-back {
+    transform: rotateY(180deg) translateZ(calc(var(--grid-size)/2));
+}
+
+.cube-left {
+    transform: rotateY(-90deg) translateZ(calc(var(--grid-size)/2));
+}
+
+.cube-bottom {
+    transform: rotateX(-90deg) translateZ(calc(var(--grid-size)/2));
+}
+
+/* Snake Styling */
+.snake-cube .cube-face {
+    background-color: var(--neon-green);
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.snake-cube .cube-top {
+    background-color: #4eff4e;
+    /* Lighter top */
+}
+
+.snake-head .cube-face {
+    background-color: white;
+    box-shadow: 0 0 20px var(--neon-green);
+}
+
+/* Food Styling */
+.food-cube .cube-face {
+    background-color: var(--neon-pink);
+    box-shadow: 0 0 15px var(--neon-pink);
+}
+
+.food-cube .cube-inner {
+    animation: float 1s infinite alternate ease-in-out;
+}
+
+@keyframes float {
+    0% {
+        transform: translateZ(0);
+    }
+
+    100% {
+        transform: translateZ(10px);
+    }
+}
+
+/* Particles */
+.particle {
+    position: absolute;
+    width: 5px;
+    height: 5px;
+    background: var(--neon-pink);
+    pointer-events: none;
+    transform-style: preserve-3d;
+}
