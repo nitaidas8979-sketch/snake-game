@@ -308,16 +308,23 @@ let touchEndY = 0;
 
 const minSwipeDistance = 30; // Minimum swipe distance in pixels
 
+// Prevent all scrolling on touch devices
 document.addEventListener('touchstart', (e) => {
+  e.preventDefault();
   touchStartX = e.changedTouches[0].screenX;
   touchStartY = e.changedTouches[0].screenY;
-}, { passive: true });
+}, { passive: false });
+
+document.addEventListener('touchmove', (e) => {
+  e.preventDefault();
+}, { passive: false });
 
 document.addEventListener('touchend', (e) => {
+  e.preventDefault();
   touchEndX = e.changedTouches[0].screenX;
   touchEndY = e.changedTouches[0].screenY;
   handleSwipe();
-});
+}, { passive: false });
 
 function handleSwipe() {
   const deltaX = touchEndX - touchStartX;

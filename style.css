@@ -16,13 +16,23 @@
     box-sizing: border-box;
 }
 
+html,
 body {
     background-color: var(--bg-color);
     color: white;
     font-family: 'Orbitron', sans-serif;
-    height: 100vh;
+    height: 100%;
+    width: 100%;
     overflow: hidden;
     perspective: var(--perspective);
+    position: fixed;
+    top: 0;
+    left: 0;
+    touch-action: none;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+    overscroll-behavior: none;
 }
 
 /* UI Layer */
@@ -141,6 +151,8 @@ h1 {
     justify-content: center;
     align-items: center;
     perspective: var(--perspective);
+    overflow: hidden;
+    touch-action: none;
 }
 
 .world {
@@ -149,6 +161,30 @@ h1 {
     transform-style: preserve-3d;
     transform: rotateX(60deg) rotateZ(0deg);
     transition: transform 0.5s cubic-bezier(0.1, 0.7, 1.0, 0.1);
+    max-width: 95vw;
+    max-height: 60vh;
+}
+
+/* Mobile responsive scaling */
+@media (max-width: 768px) {
+    :root {
+        --grid-size: 18px;
+    }
+
+    h1 {
+        font-size: 1.2rem;
+    }
+
+    .overlay {
+        padding: 20px;
+        width: 90%;
+        max-width: 300px;
+    }
+
+    .cyber-btn {
+        padding: 12px 30px;
+        font-size: 1rem;
+    }
 }
 
 .floor-grid {
