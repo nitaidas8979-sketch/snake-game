@@ -41,7 +41,9 @@ function playSound(type) {
 }
 
 // Constants
-const GRID_SIZE = 40; // Pixels per unit matches CSS
+function getGridSize() {
+  return parseInt(getComputedStyle(document.documentElement).getPropertyValue('--grid-size')) || 40;
+}
 const BOARD_UNITS = 20;
 
 // State
@@ -86,7 +88,8 @@ function createCube(type, x, y) {
 function updateCubePosition(element, x, y) {
   // x, y are 0-indexed (0 to 19)
   // Translate converts to pixels
-  element.style.transform = `translate3d(${x * GRID_SIZE}px, ${y * GRID_SIZE}px, 0)`;
+  const gridSize = getGridSize();
+  element.style.transform = `translate3d(${x * gridSize}px, ${y * gridSize}px, 0)`;
 }
 
 // Game Loop
@@ -214,8 +217,9 @@ function spawnParticles(x, y, type) {
     const vy = (Math.random() - 0.5) * 100;
     const vz = (Math.random()) * 100;
 
-    const startX = x * GRID_SIZE + 20;
-    const startY = y * GRID_SIZE + 20;
+    const gridSize = getGridSize();
+    const startX = x * gridSize + gridSize / 2;
+    const startY = y * gridSize + gridSize / 2;
 
     // Manual animation
     p.style.transform = `translate3d(${startX}px, ${startY}px, 20px)`;
