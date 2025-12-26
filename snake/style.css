@@ -276,6 +276,26 @@ h1 {
     animation: float 1s infinite alternate ease-in-out;
 }
 
+/* Bomb Styling */
+.bomb-cube .cube-face {
+    background-color: #ff3300;
+    box-shadow: 0 0 15px #ff3300;
+}
+
+.bomb-cube .cube-inner {
+    animation: pulse 0.5s infinite alternate ease-in-out;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(0.9);
+    }
+
+    100% {
+        transform: scale(1.1);
+    }
+}
+
 @keyframes float {
     0% {
         transform: translateZ(0);

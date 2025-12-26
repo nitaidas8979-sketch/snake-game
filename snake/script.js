@@ -49,6 +49,7 @@ const BOARD_UNITS = 20;
 // State
 let snake = [];
 let food = null;
+let bombs = [];
 let direction = { x: 1, y: 0 };
 let nextDirection = { x: 1, y: 0 };
 let lastInputTime = 0;
@@ -96,6 +97,7 @@ function updateCubePosition(element, x, y) {
 function initGame() {
   snake = [{ x: 10, y: 10 }, { x: 9, y: 10 }, { x: 8, y: 10 }];
   food = null;
+  bombs = [];
   direction = { x: 1, y: 0 };
   nextDirection = { x: 1, y: 0 };
   score = 0;
@@ -131,6 +133,12 @@ function step() {
     return;
   }
 
+  // Check collision with bombs
+  if (checkBombCollision(head)) {
+    gameOver(head, 'bomb');
+    return;
+  }
+
   snake.unshift(head);
 
   // Camera Tilt
@@ -146,6 +154,13 @@ function step() {
     }
     scoreElement.textContent = score;
     spawnParticles(head.x, head.y, 'eat');
+    spawnParticles(head.x, head.y, 'eat');
+
+    // Spawn bomb chance 20% and limit max bombs
+    if (bombs.length < 5 && Math.random() > 0.8) {
+      spawnBomb();
+    }
+
     generateFood();
     // Snake grows
   } else {
@@ -159,6 +174,10 @@ function checkSelfCollision(head) {
   // Start from index 0 because we haven't unshifted yet? No, unshift happens after check usually.
   // If we check before unshift, we check against current body.
   return snake.some(segment => segment.x === head.x && segment.y === head.y);
+}
+
+function checkBombCollision(head) {
+  return bombs.some(bomb => bomb.x === head.x && bomb.y === head.y);
 }
 
 function render() {
@@ -176,6 +195,33 @@ function render() {
     const cube = createCube('food', food.x, food.y);
     board3D.appendChild(cube);
   }
+
+  // Draw Bombs
+  bombs.forEach(bomb => {
+    const cube = createCube('bomb', bomb.x, bomb.y);
+    board3D.appendChild(cube);
+  });
+}
+
+function spawnBomb() {
+  let valid = false;
+  while (!valid) {
+    const x = Math.floor(Math.random() * BOARD_UNITS);
+    const y = Math.floor(Math.random() * BOARD_UNITS);
+
+    // Don't spawn on snake, food, or other bombs
+    const onSnake = snake.some(s => s.x === x && s.y === y);
+    const onFood = food && food.x === x && food.y === y;
+    const onBomb = bombs.some(b => b.x === x && b.y === y);
+
+    // Safety distance from head (don't spawn too close)
+    const distanceToHead = Math.abs(x - snake[0].x) + Math.abs(y - snake[0].y);
+
+    if (!onSnake && !onFood && !onBomb && distanceToHead > 3) {
+      bombs.push({ x, y });
+      valid = true;
+    }
+  }
 }
 
 function generateFood() {
@@ -191,7 +237,7 @@ function generateFood() {
   }
 }
 
-function gameOver(crashHead) {
+function gameOver(crashHead, type) {
   isRunning = false;
   clearInterval(gameInterval);
   if (crashHead) {
@@ -199,14 +245,22 @@ function gameOver(crashHead) {
     const crashCube = createCube('crash', crashHead.x, crashHead.y);
     board3D.appendChild(crashCube);
   }
-  playSound('crash');
+
+  if (type === 'bomb') {
+    // Big explosion
+    spawnParticles(crashHead.x, crashHead.y, 'bomb');
+    playSound('crash');
+  } else {
+    playSound('crash');
+  }
+
   finalScoreElement.textContent = score;
   gameOverScreen.classList.remove('hidden');
 }
 
 // Particle System
 function spawnParticles(x, y, type) {
-  const count = 10;
+  const count = type === 'bomb' ? 30 : 10;
   for (let i = 0; i < count; i++) {
     const p = document.createElement('div');
     p.className = 'particle';
